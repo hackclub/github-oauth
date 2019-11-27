@@ -32,8 +32,13 @@ const ghAuth = async (req) => {
     headers: { Authorization: `token ${token}` }
   })
 
+  console.log('Successfully authed', userResponse.data.login, 'for the url', req.url)
+  if (userResponse.headers['x-oauth-scopes']) {
+    console.log(userResponse.data.login, 'has added the following scopes: ', userResponse.headers['x-oauth-scopes'])
+  }
+
   return {
-    accessToken,
+    token,
     user: userResponse.data,
   }
 }
@@ -55,7 +60,7 @@ app.get('/hack-pack', async (req, res) => {
   try {
     const authData = await ghAuth(req)
 
-    const { login: username = '', email = '' } = authData.user || {}
+    const { login: username = '', email = '' } = authData.user
 
     destinationUrl += objectToQueryString({
       'prefill_GitHub Username': username,
@@ -70,21 +75,24 @@ app.get('/hack-pack', async (req, res) => {
 
 app.get('/dinoissour-badge', async(req, res) => {
   let destinationUrl = 'https://excitedcornsilkpackages.now.sh'
+
   try {
+    const authData = await ghAuth(req)
+
     const teamID = 3542087
-    const accessToken = ghAuth(req)
-    const username = await request('GET /user', {
-      headers: { Authorization: `token ${accessToken}` }
-    }).data.login
 
-    const inviteStatus = await request(`PUT /teams/:team_id/memberships/:username`, {
-      headers: { Authorization: `token ${accessToken}` },
+    const orgUsername = process.env.GITHUB_ADMIN_USERNAME
+    const orgToken = process.env.GITHUB_ADMIN_TOKEN
+    const token = Buffer.from(orgUsername + ':' + orgToken).toString('base64')
+
+    const invite = await request(`PUT /teams/:team_id/memberships/:username`, {
+      headers: { Authorization: `Basic ${token}` },
       team_id: teamID,
-      username,
+      username: authData.user.login,
       role: 'member'
-    }).data.state
+    })
 
-    destinationUrl += objectToQueryString({ username, inviteStatus })
+    destinationUrl += objectToQueryString({ username: authData.user.login, inviteStatus: invite.data.state })
 
   } catch (e) {
     console.error(e)
