@@ -74,7 +74,7 @@ app.get('/hack-pack', async (req, res) => {
 })
 
 app.get('/dinoissour-badge', async(req, res) => {
-  let destinationUrl = 'https://excitedcornsilkpackages.now.sh'
+  let destinationUrl = 'https://draw-dino.hackclub.com'
 
   try {
     const authData = await ghAuth(req)
