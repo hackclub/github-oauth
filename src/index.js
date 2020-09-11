@@ -109,7 +109,7 @@ app.get('/generate-account', async (req, res) => {
   /* Check if person is already there */
 
   // Get user record
-  const record = (await base('SDP Priority Activations').find(recordId));
+  const record = base('SDP Priority Activations').find(recordId);
   const userName = record.fields['GitHub Username']
   
 
