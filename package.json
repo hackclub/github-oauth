@@ -25,7 +25,7 @@
     "start": "node build/index.js",
     "clean": "rm -rf ./build",
     "babel-build": "babel src --out-dir build --source-maps",
-    "build": "yarn run clean; yarn run babel-build"
+    "build": "npm run clean; npm run babel-build"
   },
   "heroku-run-build-script": true
 }
