@@ -73,6 +73,24 @@ app.get('/hack-pack', async (req, res) => {
   }
 })
 
+app.get('/hack-pack2', async (req, res) => {
+  let destinationUrl = 'https://airtable.com/shrQGYvcSqhta7xk6'
+  try {
+    const authData = await ghAuth(req)
+
+    const { login: username = '', email = '' } = authData.user
+
+    destinationUrl += objectToQueryString({
+      'prefill_GitHub Username': username,
+      'prefill_GitHub Email': email
+    })
+  } catch (e) {
+    console.error(e)
+  } finally {
+    res.redirect(302, destinationUrl)
+  }
+})
+
 app.get('/dinoissour-badge', async(req, res) => {
   let destinationUrl = 'https://draw-dino.hackclub.com'
 
