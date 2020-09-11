@@ -3,13 +3,6 @@ import { request } from '@octokit/request'
 import Airtable from 'airtable'
 import fetch from 'node-fetch'
 
-/* Configure Airtable */
-Airtable.configure({
-  apiKey: process.env.AIRTABLE_API_KEY
-})
-
-const SDP_BASE_ID = 'apple9fiV81JsRytC' // Base ID for "SDP Priority Activations" base
-const base = Airtable.base(SDP_BASE_ID);
 
 const env = process.env.NODE_ENV || 'development'
 if (env === 'development') {
@@ -17,6 +10,13 @@ if (env === 'development') {
 }
 
 
+/* Configure Airtable */
+Airtable.configure({
+  apiKey: process.env.AIRTABLE_API_KEY
+})
+
+const SDP_BASE_ID = 'apple9fiV81JsRytC' // Base ID for "SDP Priority Activations" base
+const base = Airtable.base(SDP_BASE_ID);
 
 const app = express()
 
@@ -104,17 +104,16 @@ app.get('/hack-pack2', async (req, res) => {
 })
 
 app.get('/generate-account', async (req, res) => {
-  const recordId = req.params.recordId;
-
+  try {
+  const recordId = req.query.recordId;
   /* Check if person is already there */
 
   // Get user record
   const record = base('SDP Priority Activations').find(recordId);
   const userName = (await record).get('GitHub Username')
-  
 
   const isApproved = await base('SDP Priority Activations').select({
-    filterByFormula: `AND({GitHub Username} = ${userName}, {Approved} = true, {Years Since} >= 2`
+    filterByFormula: `AND({GitHub Username} = "${userName}", {Approved} = TRUE(), {Years Since} <= 2)`
   }).all()
 
   // Check if there isn't a previous record
@@ -122,29 +121,32 @@ app.get('/generate-account', async (req, res) => {
     console.log('Previous record found');
     res.redirect(302, 'https://education.github.com/pack') // They already had one, so send them there!
     /* Set not approved for duplicate */
-    base('SDP Priority Activations').update({
+    await base('SDP Priority Activations').update([{
       id: recordId,
       fields: {
         'Rejection Reason': 'Duplicate Airtable submission'
       }
-    })
+    }])
     return;
   }
 
   /* Update record for "Approved" */
-  await base('SDP Priority Activations').update({
+  await base('SDP Priority Activations').update([{
     id: recordId,
     fields: {
       'Approved': true
     }
-  })
+  }])
+
 
   /* Generate special link */
   const activateRequest = await fetch(`https://education.github.com/student/verify/generate?school_id=27876&student_id=${recordId}&secret_key=${process.env.GITHUB_EDU_SECRET}`)
 
   /* Redirect to special link */
-  res.redirect(302, activateRequest.text());
-  
+  res.redirect(302, await activateRequest.text());
+} catch (err) {
+  console.error(err);
+}
 })
 
 app.get('/dinoissour-badge', async(req, res) => {

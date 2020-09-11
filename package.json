@@ -21,7 +21,7 @@
     "nodemon": "^2.0.1"
   },
   "scripts": {
-    "dev": "nodemon --exec babel-node src/index.js",
+    "dev": "nodemon --exec babel-node src/index.js --trace-warnings",
     "start": "node build/index.js",
     "clean": "rm -rf ./build",
     "babel-build": "babel src --out-dir build --source-maps",
