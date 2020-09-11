@@ -111,6 +111,14 @@ app.get('/generate-account', async (req, res) => {
     // Get user record
     const record = base('SDP Priority Activations').find(recordId);
     const userName = (await record).get('GitHub Username')
+    const status = (await record).get('Approved')
+
+    // If they have used the URL already, send them to pack.
+
+    if (status === true){
+      res.redirect(302, 'https://education.github.com/pack')
+      return
+    }
 
     const isApproved = await base('SDP Priority Activations').select({
       filterByFormula: `AND({GitHub Username} = "${userName}", {Approved} = TRUE(), {Years Since} <= 2)`
