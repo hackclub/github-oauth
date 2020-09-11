@@ -103,7 +103,7 @@ app.get('/hack-pack2', async (req, res) => {
   }
 })
 
-app.get('/generate-account'), async (req, res) => {
+app.get('/generate-account', async (req, res) => {
   const recordId = req.params.recordId;
 
   /* Check if person is already there */
@@ -145,7 +145,7 @@ app.get('/generate-account'), async (req, res) => {
   /* Redirect to special link */
   res.redirect(302, activateRequest.text());
   
-}
+})
 
 app.get('/dinoissour-badge', async(req, res) => {
   let destinationUrl = 'https://draw-dino.hackclub.com'
