@@ -106,7 +106,8 @@ app.get('/generate-account', async (req, res) => {
       filterByFormula: `AND({GitHub Username} = "${userName}", {Approved} = TRUE(), {Years Since} <= 2)`
     }).all()
 
-    // Check if there isn't a previous record
+    /* Check if there isn't a previous record that has been approved 
+       in the past two years (standard validation period) for this user */
     if (isApproved.length !== 0) {
       console.log('Previous record found');
       res.redirect(302, 'https://education.github.com/pack') // They already had one, so send them there!
