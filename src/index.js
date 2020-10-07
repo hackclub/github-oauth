@@ -85,6 +85,24 @@ app.get('/hack-pack', async (req, res) => {
   }
 })
 
+app.get('/gwa-pack', async (req, res) => {
+  let destinationUrl = 'https://airtable.com/shrB2jelvHKAvTDd9'
+  try {
+    const authData = await ghAuth(req)
+
+    const { login: username = '', email = '' } = authData.user
+
+    destinationUrl += objectToQueryString({
+      'prefill_GitHub Username': username,
+      'prefill_GitHub Email': email
+    })
+  } catch (e) {
+    console.error(e)
+  } finally {
+    res.redirect(302, destinationUrl)
+  }
+})
+
 app.get('/generate-account', async (req, res) => {
   try {
     const recordId = req.query.recordId;
