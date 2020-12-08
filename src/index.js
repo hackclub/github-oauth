@@ -68,7 +68,7 @@ const objectToQueryString = obj => {
 }
 
 app.get('/hack-pack', async (req, res) => {
-  let destinationUrl = 'https://airtable.com/shrQGYvcSqhta7xk6'
+  let destinationUrl = 'https://airtable.com/shru4fEbdqDMXoYEE'
   try {
     const authData = await ghAuth(req)
 
