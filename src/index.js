@@ -2,14 +2,13 @@ import express from 'express'
 import { request } from '@octokit/request'
 import Airtable from 'airtable'
 import fetch from 'node-fetch'
-var clearbit = require('clearbit')(process.env.CLEARBIT);
-
 
 const env = process.env.NODE_ENV || 'development'
 if (env === 'development') {
   require('dotenv').config()
 }
 
+var clearbit = require('clearbit')(process.env.CLEARBIT_KEY);
 
 /* Configure Airtable */
 Airtable.configure({
@@ -89,7 +88,6 @@ app.get('/hack-pack', async (req, res) => {
       email: userEmail,
       ip: req.ip
     }).then(function (result) {
-      console.log(result);
       if (result.risk.level === 'high') {
         res.redirect(302, 'https://1.bp.blogspot.com/-hgRJj0-CkZQ/WPeV6Qn44wI/AAAAAAAACoA/buVbHEOePpcbkKlh5NSqU3UaJR3efK5DACLcB/s1600/fishy.gif')
       }
