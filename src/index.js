@@ -2,6 +2,7 @@ import express from 'express'
 import { request } from '@octokit/request'
 import Airtable from 'airtable'
 import fetch from 'node-fetch'
+var clearbit = require('clearbit')(process.env.CLEARBIT);
 
 
 const env = process.env.NODE_ENV || 'development'
@@ -69,19 +70,37 @@ const objectToQueryString = obj => {
 
 app.get('/hack-pack', async (req, res) => {
   let destinationUrl = 'https://airtable.com/shru4fEbdqDMXoYEE'
+  let userEmail
   try {
     const authData = await ghAuth(req)
 
     const { login: username = '', email = '' } = authData.user
+    
+    userEmail = email
 
     destinationUrl += objectToQueryString({
       'prefill_GitHub Username': username,
       'prefill_GitHub Email': email
-    })
+    })    
   } catch (e) {
     console.error(e)
   } finally {
-    res.redirect(302, destinationUrl)
+    clearbit.Risk.calculate({
+      email: userEmail,
+      ip: req.ip
+    }).then(function (result) {
+      console.log(result);
+      if (result.risk.level === 'high') {
+        res.redirect(302, 'https://1.bp.blogspot.com/-hgRJj0-CkZQ/WPeV6Qn44wI/AAAAAAAACoA/buVbHEOePpcbkKlh5NSqU3UaJR3efK5DACLcB/s1600/fishy.gif')
+      }
+      else{
+        res.redirect(302, destinationUrl)
+      }
+    }).catch(function (err) {
+      // In case of network/server errors
+      console.error(err);
+    });
+    
   }
 })
 
