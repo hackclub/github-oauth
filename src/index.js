@@ -141,7 +141,7 @@ app.get('/generate-account', async (req, res) => {
 })
 
 app.get('/dinoissour-badge', async(req, res) => {
-  let destinationUrl = 'https://draw-dino.hackclub.com'
+  let destinationUrl = req.query.destination ?? 'https://draw-dino.hackclub.com'
 
   try {
     const authData = await ghAuth(req)
