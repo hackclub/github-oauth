@@ -5,9 +5,12 @@ WORKDIR /app
 COPY package.json .
 COPY package-lock.json .
 
+# build project
+RUN npm run build
+
 RUN npm install
 
 COPY . .
 
 EXPOSE 3000
-CMD ["yarn", "start"]
+CMD ["npm", "start"]
