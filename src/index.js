@@ -32,12 +32,9 @@ const ghAuth = async (req) => {
   const authResponse = await octokit.request(
     'POST https://github.com/login/oauth/access_token',
     {
-      headers: { Accept: 'application/json' },
-      data: {
         client_id: process.env.GITHUB_CLIENT_ID,
         client_secret: process.env.GITHUB_CLIENT_SECRET,
         code
-      }
     }
   )
 
