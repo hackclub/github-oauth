@@ -145,7 +145,6 @@ app.get('/generate-account', async (req, res) => {
 })
 
 app.get('/dinoissour-badge', async(req, res) => {
-  console.log("got gh code", req.query.code);
   let destinationUrl = req.query.destination ?? 'https://draw-dino.hackclub.com'
 
   try {
@@ -164,8 +163,6 @@ app.get('/dinoissour-badge', async(req, res) => {
     //   role: 'member'
     // })
 
-    console.log("auth data", authData);
-    console.log("login", authData.user.login);
     const invite = await octokit.request('PUT /orgs/{org}/teams/{team_slug}/memberships/{username}', {
       org: 'hackclub',
       team_slug: "Dinoisseurs",
