@@ -44,7 +44,7 @@ const ghAuth = async (req) => {
 
   const token = authResponse.data.access_token
 
-  const userResponse = await request('GET /user', {
+  const userResponse = await octokit.request('GET /user', {
     headers: { Authorization: `token ${token}` }
   })
 
