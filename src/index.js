@@ -1,5 +1,4 @@
 import express from 'express'
-// import { request } from '@octokit/request'
 import Airtable from 'airtable'
 import fetch from 'node-fetch'
 
