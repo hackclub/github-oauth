@@ -30,7 +30,7 @@ const ghAuth = async (req) => {
     throw new Error(`I got an auth request without an access token`)
   }
 
-  const authResponse = await request(
+  const authResponse = await octokit.request(
     'POST https://github.com/login/oauth/access_token',
     {
       headers: { Accept: 'application/json' },
