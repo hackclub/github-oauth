@@ -149,19 +149,6 @@ app.get('/dinoissour-badge', async(req, res) => {
   try {
     const authData = await ghAuth(req)
 
-    // const teamID = 3542087
-
-    // const orgUsername = process.env.GITHUB_ADMIN_USERNAME
-    // const orgToken = process.env.GITHUB_ADMIN_TOKEN
-    // const token = Buffer.from(orgUsername + ':' + orgToken).toString('base64')
-
-    // const invite = await request(`PUT /teams/:team_id/memberships/:username`, {
-    //   headers: { Authorization: `Basic ${token}` },
-    //   team_id: teamID,
-    //   username: authData.user.login,
-    //   role: 'member'
-    // })
-
     const invite = await octokit.request('PUT /orgs/{org}/teams/{team_slug}/memberships/{username}', {
       org: 'hackclub',
       team_slug: "Dinoisseurs",
