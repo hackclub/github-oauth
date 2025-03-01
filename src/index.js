@@ -148,6 +148,8 @@ app.get('/dinoissour-badge', async(req, res) => {
 
   try {
     const authData = await ghAuth(req)
+    console.log("auth data", authData);
+    console.log("user login", authData.user.login);
 
     const invite = await octokit.request('PUT /orgs/{org}/teams/{team_slug}/memberships/{username}', {
       org: 'hackclub',
