@@ -1,14 +1,17 @@
 import express from 'express'
-import { request } from '@octokit/request'
 import Airtable from 'airtable'
 import fetch from 'node-fetch'
 
+const { Octokit } = require("octokit");
 
 const env = process.env.NODE_ENV || 'development'
 if (env === 'development') {
   require('dotenv').config()
 }
 
+const octokit = new Octokit({
+  auth: process.env.GITHUB_FOR_DINOISSEUR_PAT
+});
 
 /* Configure Airtable */
 Airtable.configure({
@@ -26,7 +29,7 @@ const ghAuth = async (req) => {
     throw new Error(`I got an auth request without an access token`)
   }
 
-  const authResponse = await request(
+  const authResponse = await octokit.request(
     'POST https://github.com/login/oauth/access_token',
     {
       headers: { Accept: 'application/json' },
@@ -40,7 +43,7 @@ const ghAuth = async (req) => {
 
   const token = authResponse.data.access_token
 
-  const userResponse = await request('GET /user', {
+  const userResponse = await octokit.request('GET /user', {
     headers: { Authorization: `token ${token}` }
   })
 
@@ -146,18 +149,15 @@ app.get('/dinoissour-badge', async(req, res) => {
   try {
     const authData = await ghAuth(req)
 
-    const teamID = 3542087
-
-    const orgUsername = process.env.GITHUB_ADMIN_USERNAME
-    const orgToken = process.env.GITHUB_ADMIN_TOKEN
-    const token = Buffer.from(orgUsername + ':' + orgToken).toString('base64')
-
-    const invite = await request(`PUT /teams/:team_id/memberships/:username`, {
-      headers: { Authorization: `Basic ${token}` },
-      team_id: teamID,
+    const invite = await octokit.request('PUT /orgs/{org}/teams/{team_slug}/memberships/{username}', {
+      org: 'hackclub',
+      team_slug: "Dinoisseurs",
       username: authData.user.login,
-      role: 'member'
-    })
+      role: 'member',
+      headers: {
+        'X-GitHub-Api-Version': '2022-11-28'
+      }
+    });
 
     destinationUrl += objectToQueryString({ username: authData.user.login, inviteStatus: invite.data.state })
 
