@@ -3,6 +3,7 @@ import Airtable from 'airtable'
 import fetch from 'node-fetch'
 
 const { Octokit } = require("octokit");
+import { request } from "@octokit/request";
 
 const env = process.env.NODE_ENV || 'development'
 if (env === 'development') {
@@ -29,21 +30,18 @@ const ghAuth = async (req) => {
     throw new Error(`I got an auth request without an access token`)
   }
 
-  const authResponse = await octokit.request(
+  const authResponse = await request(
     'POST https://github.com/login/oauth/access_token',
     {
-      headers: { Accept: 'application/json' },
-      data: {
         client_id: process.env.GITHUB_CLIENT_ID,
         client_secret: process.env.GITHUB_CLIENT_SECRET,
         code
-      }
     }
   )
-
+  
   const token = authResponse.data.access_token
 
-  const userResponse = await octokit.request('GET /user', {
+  const userResponse = await request('GET /user', {
     headers: { Authorization: `token ${token}` }
   })
 
