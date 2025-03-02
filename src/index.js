@@ -37,6 +37,8 @@ const ghAuth = async (req) => {
         code
     }
   )
+  
+  console.log("auth response", authResponse);
 
   const token = authResponse.data.access_token
 
