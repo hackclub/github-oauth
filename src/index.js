@@ -39,8 +39,6 @@ const ghAuth = async (req) => {
     }
   )
   
-  console.log("auth response", authResponse);
-
   const token = authResponse.data.access_token
 
   const userResponse = await request('GET /user', {
@@ -148,8 +146,6 @@ app.get('/dinoissour-badge', async(req, res) => {
 
   try {
     const authData = await ghAuth(req)
-    console.log("auth data", authData);
-    console.log("user login", authData.user.login);
 
     const invite = await octokit.request('PUT /orgs/{org}/teams/{team_slug}/memberships/{username}', {
       org: 'hackclub',
